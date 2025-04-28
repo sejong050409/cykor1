@@ -4,7 +4,7 @@
     실제 시스템에서는 스택이 메모리에 저장되지만, 본 과제에서는 `int` 배열을 이용하여 메모리를 구현합니다.
     원래는 SFP와 Return Address에 실제 가상 메모리 주소가 들어가겠지만, 이번 과제에서는 -1로 대체합니다.
     
-    int call_stack[]      : 실제 데이터(`int 값`) 또는 `-1` (메타데이터 구분용)을 저장하는 int 배열 
+    int call_stack[]      : 실제 데이터(`int 값`) 또는 `-1` (메타데이터 구분용)을 저  
     char stack_info[][]   : call_stack[]과 같은 위치(index)에 대한 설명을 저장하는 문자열 배열
 
     ==========================call_stack 저장 규칙==========================
@@ -22,6 +22,7 @@
 */
 #include <stdio.h>
 #define STACK_SIZE 50 // 최대 스택 크기
+#include <string.h>
 
 int     call_stack[STACK_SIZE];         // Call Stack을 저장하는 배열
 char    stack_info[STACK_SIZE][20];     // Call Stack 요소에 대한 설명을 저장하는 배열
@@ -78,10 +79,36 @@ void func1(int arg1, int arg2, int arg3)
 {
     int var_1 = 100;
 
+    call_stack[++SP] = arg1;
+    strcpy(stack_info[SP], "arg1");
+
+    call_stack[++SP] = arg2;
+    strcpy(stack_info[SP], "arg2");
+
+    call_stack[++SP] = arg3;
+    strcpy(stack_info[SP], "arg3");
+
+    call_stack[++SP] = -1;
+    strcpy(stack_info[SP], "Return Address");
+
+    call_stack[++SP] = FP;
+    strcpy(stack_info[SP], "func1 SFP");
+
+    FP = SP;
+
+    call_stack[++SP] = var_1;
+    strcpy(stack_info[SP], "var_1");
     // func1의 스택 프레임 형성 (함수 프롤로그 + push)
     print_stack();
     func2(11, 13);
     // func2의 스택 프레임 제거 (함수 에필로그 + pop)
+    SP--; 
+    SP--; 
+    FP = call_stack[SP]; 
+    SP--; 
+    SP--; 
+    SP--; 
+    SP--; 
     print_stack();
 }
 
@@ -90,10 +117,30 @@ void func2(int arg1, int arg2)
 {
     int var_2 = 200;
 
+    call_stack[++SP] = arg1;
+    strcpy(stack_info[SP], "arg1");
+
+    call_stack[++SP] = arg2;
+    strcpy(stack_info[SP], "arg2");
+
+    call_stack[++SP] = -1;
+    strcpy(stack_info[SP], "Return Address");
+
+    call_stack[++SP] = FP;
+    strcpy(stack_info[SP], "func2 SFP");
+
+    FP = SP;
+
+    call_stack[++SP] = var_2;
+    strcpy(stack_info[SP], "var_2");
     // func2의 스택 프레임 형성 (함수 프롤로그 + push)
     print_stack();
     func3(77);
     // func3의 스택 프레임 제거 (함수 에필로그 + pop)
+    SP--;    
+    FP = call_stack[--SP]; 
+    SP--;    
+    SP -= 2; 
     print_stack();
 }
 
@@ -103,7 +150,29 @@ void func3(int arg1)
     int var_3 = 300;
     int var_4 = 400;
 
+    call_stack[++SP] = arg1;
+    strcpy(stack_info[SP], "arg1");
+
+    call_stack[++SP] = -1;
+    strcpy(stack_info[SP], "Return Address");
+
+    call_stack[++SP] = FP;
+    strcpy(stack_info[SP], "func3 SFP");
+
+    FP = SP;
+
+    call_stack[++SP] = var_3;
+    strcpy(stack_info[SP], "var_3");
+
+    call_stack[++SP] = var_4;
+    strcpy(stack_info[SP], "var_4");
     // func3의 스택 프레임 형성 (함수 프롤로그 + push)
+
+    SP--;    
+    SP--;    
+    FP = call_stack[--SP]; 
+    SP--;    
+    SP--;    
     print_stack();
 }
 

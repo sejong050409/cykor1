@@ -79,14 +79,14 @@ void func1(int arg1, int arg2, int arg3)
 {
     int var_1 = 100;
 
-    call_stack[++SP] = arg1;
-    strcpy(stack_info[SP], "arg1");
+    call_stack[++SP] = arg3;
+    strcpy(stack_info[SP], "arg3");
 
     call_stack[++SP] = arg2;
     strcpy(stack_info[SP], "arg2");
 
-    call_stack[++SP] = arg3;
-    strcpy(stack_info[SP], "arg3");
+    call_stack[++SP] = arg1;
+    strcpy(stack_info[SP], "arg1");
 
     call_stack[++SP] = -1;
     strcpy(stack_info[SP], "Return Address");
@@ -102,13 +102,10 @@ void func1(int arg1, int arg2, int arg3)
     print_stack();
     func2(11, 13);
     // func2의 스택 프레임 제거 (함수 에필로그 + pop)
-    SP--; 
-    SP--; 
-    FP = call_stack[SP]; 
-    SP--; 
-    SP--; 
-    SP--; 
-    SP--; 
+    SP--;    
+    FP = call_stack[--SP]; 
+    SP--;    
+    SP -= 2; 
     print_stack();
 }
 
@@ -117,11 +114,11 @@ void func2(int arg1, int arg2)
 {
     int var_2 = 200;
 
-    call_stack[++SP] = arg1;
-    strcpy(stack_info[SP], "arg1");
-
     call_stack[++SP] = arg2;
     strcpy(stack_info[SP], "arg2");
+
+    call_stack[++SP] = arg1;
+    strcpy(stack_info[SP], "arg1");
 
     call_stack[++SP] = -1;
     strcpy(stack_info[SP], "Return Address");
@@ -138,9 +135,11 @@ void func2(int arg1, int arg2)
     func3(77);
     // func3의 스택 프레임 제거 (함수 에필로그 + pop)
     SP--;    
+    SP--;    
     FP = call_stack[--SP]; 
     SP--;    
-    SP -= 2; 
+    SP--;   
+    
     print_stack();
 }
 
@@ -167,13 +166,8 @@ void func3(int arg1)
     call_stack[++SP] = var_4;
     strcpy(stack_info[SP], "var_4");
     // func3의 스택 프레임 형성 (함수 프롤로그 + push)
-
-    SP--;    
-    SP--;    
-    FP = call_stack[--SP]; 
-    SP--;    
-    SP--;    
-    print_stack();
+	print_stack();
+     
 }
 
 
@@ -182,6 +176,13 @@ int main()
 {
     func1(1, 2, 3);
     // func1의 스택 프레임 제거 (함수 에필로그 + pop)
+    SP--; 
+    SP--; 
+    FP = call_stack[SP]; 
+    SP--; 
+    SP--; 
+    SP--; 
+    SP--; 
     print_stack();
     return 0;
 }
